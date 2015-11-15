@@ -1,0 +1,43 @@
+#
+# Namespaces
+#
+# ::oo::class::CbIo
+# ::oo::class::CodeBreaker
+# ::oo::class::Model
+#
+#
+# vcl_cb.tcl creates
+# ::vtcl_codebreaker
+# loads view.tcl in that namespace
+# loads vtcl_codebreaker.tcl in its default namespace
+# defines a variable of class Model in its default namespace
+# ::oo:::Model is imported
+# ::oo:::CodeBreaker is imported
+# 
+# spectcl_cb.tcl creates
+# ::spectcl_codebreaker
+# loads view.tcl in that namespace
+# loads spectcl_codebreaker.tcl in its default namespace
+# defines a variable of class Model in its default namespace
+# ::oo:::Model is imported
+# ::oo:::CodeBreaker is imported
+#
+# procedures of view.tcl call procedures of
+# vtcl_codebreaker.tcl &
+# spectcl_codebreaker
+#
+# spectcl_codebreaker.tcl 
+# defines all procedures to be of namespace
+# spectcl_codebreaker::, i.e.
+#   proc spectcl_codebreaker::button1Cmd_command args {
+#    spectcl_codebreaker::guessCmd
+#   }
+#
+# vtcl_codebreaker.tcl 
+# defines all procedures to be of the namespaces
+# :: , ::vTcl: , vTcl:
+# and addresses $argc $argv
+#
+# procedures of vtcl_codebreaker.tcl &
+# spectcl_codebreaker.tcl call procedures of view.tcl 
+# 

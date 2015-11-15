@@ -1,0 +1,22 @@
+instrumentIncrTcl 1
+appDir {}
+errorAction 1
+breakList {{C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl 178 enabled {}} {C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl 180 enabled {}} {C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl 177 enabled {}}}
+appScriptList C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl
+appArg {}
+appType local
+doInstrument *
+appDirList C:/Users/Public/archive/github/tcltk-codebreaker/src
+instrumentDynamic 1
+dontInstrument {}
+appArgList {{}}
+prevViewFile C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl
+projVersion 1.0
+portRemote 2576
+autoLoad 0
+instrumentExpect 1
+watchList {}
+appInterp C:/int/w32/develop/TclPro1.4/win32-ix86/bin/protclsh83.exe
+instrumentTclx 1
+appScript C:/Users/Public/archive/github/tcltk-codebreaker/src/codebreaker.tcl
+appInterpList {C:/int/w32/develop/TclPro1.4/win32-ix86/bin/protclsh83.exe C:/int/w32/develop/TclPro1.4/win32-ix86/bin/prowish83.exe}

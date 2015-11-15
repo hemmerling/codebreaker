@@ -1,0 +1,19 @@
+# GUIBUILDER FILE Build 146
+# Created: 2014-09-10 08:32:25 by GUI Builder Build 146
+language tcl 8.4
+widget {Tk frame} f {
+	geometry min_column {40 40}
+	geometry min_row {40 40}
+	geometry pad_column {0 0}
+	geometry pad_row {0 0}
+	geometry resize_column {0 0}
+	geometry resize_row {0 0}
+	geometry weight_column {0 0}
+	geometry weight_row {0 0}
+	data GROUP Tk
+	data ID {}
+	data MASTER {}
+	data TYPE {Tk frame}
+	data level 0
+}
+

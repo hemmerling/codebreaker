@@ -1,0 +1,283 @@
+#!/usr/bin/env tclsh
+set appDirPath [file dirname [info script]]
+append appDirPath "/../codebreaker" 
+lappend auto_path $appDirPath 
+
+ ##
+ #  @package   codebreaker
+ #  @file      codebreaker.test
+ #  @brief     Tests for the Tcl/Tk application "Codebreaker"
+ #  @author    Rolf Hemmerling <hemmerling@gmx.net>
+ #  @version   1.00
+ #  @date      2015-11-01
+ #  @copyright GNU LESSER GENERAL PUBLIC LICENSE Version 2.1
+ #
+ #  codebreaker - Tcl/Tk application "Codebreaker"
+ #
+ #  Copyright 2015 Rolf Hemmerling
+ #
+ #  Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 2.1 
+ #  (the "License") you may not use this file except in compliance 
+ #  with the License. You may obtain a copy of the License at
+ #
+ #  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+ #
+ #  Unless required by applicable law or agreed to in writing, software
+ #  distributed under the License is distributed on an "AS IS" BASIS,
+ #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ #  See the License for the specific language governing permissions and
+ #  limitations under the License.
+##
+ 
+package require tcltest
+namespace import tcltest::*
+
+global debugNamespace
+global debugPuts
+# 'set guiPath "debug.tcl"'
+set debugPath $appDirPath
+append debugPath "/debug.tcl"
+source $debugPath
+
+# 'set guiPath "codebreaker.tcl"' 
+set codebreakerPath $appDirPath
+append codebreakerPath "/codebreaker.tcl"
+source $codebreakerPath
+
+tcltest::verbose pfs
+
+ ##
+ #  @var   szenario3NumbersCorrect
+ #  @brief Scenarios: no matches
+ #         code, guess, mark
+##
+set szenarioNoMatches { \
+{"1234" "5555" ""} }
+
+ ##
+ #  @var   szenario3NumbersCorrect
+ #  @brief Scenarios: 1 number correct
+ #         code, guess, mark
+##
+set szenario1NumberCorrect { \
+{"1234" "1555" "+"} \
+{"1234" "2555" "-"} }
+
+ ##
+ #  @var   szenario3NumbersCorrect
+ #  @brief Scenarios: 2 numbers correct
+ #         code, guess, mark
+##
+set szenario2NumbersCorrect { \
+{"1234" "5254" "++"} \
+{"1234" "5154" "+-"} \
+{"1234" "2545" "--"} } 
+
+ ##
+ #  @var   szenario3NumbersCorrect
+ #  @brief Scenarios: 3 numbers correct
+ #         code, guess, mark
+##
+set szenario3NumbersCorrect { \
+{"1234" "5234" "+++"} \
+{"1234" "5134" "++-"} \
+{"1234" "5124" "+--"} \
+{"1234" "5123" "---"} } 
+
+ ##
+ #  @var   szenarioAllNumbersCorrect
+ #  @brief Scenarios: All numbers correct
+ #         code, guess, mark
+##
+set szenarioAllNumbersCorrect { \
+{"1234" "1234" "++++"} \
+{"1234" "1243" "++--"} \
+{"1234" "1423" "+---"} \
+{"1234" "4321" "----"} } 
+
+ ##
+ #  @var   szenarioMatchesWithDuplicates
+ #  @brief Scenarios: matches with duplicates
+ #         code, guess, mark
+##
+set szenarioMatchesWithDuplicates { \
+{"1234" "1155" "+"} \
+{"1234" "5115" "-"} \
+{"1134" "1155" "++"} \
+{"1134" "5115" "+-"} \
+{"1134" "5511" "--"} \
+{"1134" "1115" "++"} \
+{"1134" "5111" "+-"} }
+
+ ##
+ #  @var   szenarios
+ #  @brief All scenarios
+ #         code, guess, mark
+##
+set szenarios []
+append szenarios $szenarioNoMatches $szenario1NumberCorrect \
+ 	         $szenario2NumbersCorrect $szenario3NumbersCorrect \
+                 $szenarioAllNumbersCorrect $szenarioMatchesWithDuplicates
+ 
+ ##
+ #  @fn      setupOutputList
+ #  @brief   Create the list of code element lists 
+ #           from list of code strings
+ #  @param   codeList List of strings, e.g. {"1234" "2555" "-"}
+ #  @return  List, e.g { {"-"} }
+##
+proc setupOutputList {codeList} {
+    set result {}
+    set codeElementList {}
+    #lappend result $codeList
+    foreach ii $codeList {
+        lappend result [lindex $ii 2]
+    }
+    return $result
+}
+
+#
+# Create the lists of inputs and outputs
+#
+#set inputList $szenarioNoMatches 
+#set inputList $szenario1NumberCorrect
+#set inputList $szenario2NumbersCorrect 
+#set inputList $szenario3NumbersCorrect
+#set inputList $szenarioAllNumbersCorrect 
+#set inputList $szenarioMatchesWithDuplicates
+set inputList $szenarios
+set outputList [setupOutputList $inputList]
+
+ ##
+ #  @fn      createInputList
+ #  @brief   Create a list of 0..99
+ #  @return  List [0 1 ... 99]
+##
+proc createInputList {} {
+    for {set jj 0} {$jj<100} {incr jj} {
+	    set result [append result $jj]
+    }
+    return $result
+}
+
+ ##
+ #  @fn      data2DictionaryTest
+ #  @brief   Create the dictionary from a list
+ #  @param   anInputList Liste
+ #  @return  Dictionary
+##
+proc data2DictionaryTest {anInputList} {
+    CodeBreaker create codebreaker
+    set resultDictionary [codebreaker data2Dictionary $anInputList]
+    codebreaker destroy
+    return $resultDictionary
+}
+
+tcltest::test data2Dictionary {converts a string into a dictionary } -body {   
+    set code "abcd"
+    return [data2DictionaryTest $code]
+} -result {a 1 b 1 c 1 d 1}
+
+tcltest::test getRightPositions {counts the number of right positions } -body {   
+    set code [ list "1" "2" "3" "4" ]
+    set guess2 "1155"
+    CodeBreaker create codebreaker
+    codebreaker start $code
+    set result [codebreaker getRightPositions $code $guess2]
+    codebreaker destroy
+    return $result
+} -result {1}
+
+tcltest::test getRightNumbers {counts the number of right numbers } -body {   
+    set code [ list "1" "2" "3" "4" ]
+    set guess2 "1155"
+    CodeBreaker create codebreaker
+    set codeAsDictionary [codebreaker start $code]
+    set result [codebreaker getRightNumbers $codeAsDictionary $guess2]
+    codebreaker destroy
+    return $result
+} -result {1}
+
+tcltest::test getNumberOfWrongPos {counts the number of wrong positions } -body {   
+    set code [ list "1" "2" "3" "4" ]
+    set guess2 "1115"
+    set number 1
+    CodeBreaker create codebreaker
+    codebreaker start $code
+    set result [codebreaker getNumberOfWrongPos $code $guess2 $number]
+    codebreaker destroy
+    return $result
+} -result {0}
+
+tcltest::test getNumberOfSigns { creates the visualisaton by "+" or "-" } -body {   
+    set number 3
+    set sign "+"
+    CodeBreaker create codebreaker
+    codebreaker start $code
+    set result [codebreaker getNumberOfSigns $number $sign]
+    codebreaker destroy
+    return $result
+} -result {+++}	
+
+tcltest::test guess {tells the number of right and wrong position } -body {   
+    CodeBreaker create codebreaker
+    set code [ list "1" "2" "3" "4" ]
+    set guess2 "1155"
+    codebreaker start $code
+    set result [codebreaker guess $guess2]    
+    codebreaker destroy
+    return $result
+} -result {+}
+
+tcltest::test guess3 {tells the number of right and wrong position } -body {   
+    CodeBreaker create codebreaker
+    set code [ list "1" "2" "3" "4" ]
+    set guess2 "5115"
+    codebreaker start $code
+    set result [codebreaker guess $guess2]    
+    codebreaker destroy
+    return $result
+} -result {-}
+
+##
+#  @fn      string2list
+#  @brief   Create an array from a string
+#  @param   guess String, e.g. "1234"
+#  @return  List, e.g {"1" "2" "3" "4"}
+##
+proc string2list {guess2} {
+    set resultList []
+    set result2 ""
+    set def "%s"
+    set guess3 [format $def $guess2]
+    for { set jj 0 } { $jj < [string length $guess3] } { incr jj } {
+	set result [string range $guess3 $jj $jj]
+	    lappend resultList $result
+    }
+    return $resultList
+}
+
+tcltest::test guess2 {tells the number of right and wrong position } -body {   
+    set result ""
+    CodeBreaker create codebreaker
+    foreach jj $inputList {
+	set code2 [split [lindex $jj 0]]
+	set guess2 [split [lindex $jj 1]]
+	codebreaker start $code2
+	set result2 [codebreaker guess $guess2]
+	lappend result $result2
+    }
+    codebreaker destroy
+    return $result
+} -result $outputList
+
+tcltest::cleanupTests
+
+if {[info script] eq $argv0} {
+    # called file so run dummy function calls  
+    puts "CodebreakerTest"
+}
+
+
+
+   
